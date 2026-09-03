@@ -1,0 +1,484 @@
+/* =====================================================
+   Smart Farm System — Visual Identity
+   Concept: a working farm ledger — deep field green,
+   ripe-wheat gold, chocolate soil, warm paper cream.
+   Display type: Fraunces (organic, a little rustic).
+   Body type: Karla (plain, legible, humanist).
+   ===================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Karla:wght@400;500;600;700&display=swap');
+
+:root {
+    --soil: #3d2b1f;
+    --leaf: #2f6b3f;
+    --leaf-deep: #204a2c;
+    --leaf-soft: #d9e8dc;
+    --gold: #e0a83e;
+    --gold-deep: #b9822a;
+    --cream: #fbf7ee;
+    --paper: #ffffff;
+    --ink: #241d14;
+    --muted: #7a6f5c;
+    --rust: #8c3a26;
+    --border: #e6ddc9;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Karla', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.55;
+}
+
+h1, h2, h3 {
+    font-family: 'Fraunces', serif;
+    color: var(--soil);
+    font-weight: 600;
+}
+
+a { color: var(--leaf); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ---------- Auth pages: split screen ---------- */
+.auth-shell {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+}
+
+@media (max-width: 860px) {
+    .auth-shell { grid-template-columns: 1fr; }
+    .auth-visual { min-height: 260px; }
+}
+
+.auth-visual {
+    background: var(--leaf-deep);
+    background-image:
+        radial-gradient(circle at 18% 22%, rgba(224,168,62,0.25), transparent 42%),
+        linear-gradient(180deg, var(--leaf-deep), var(--leaf) 130%);
+    color: var(--cream);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 44px 48px;
+    position: relative;
+    overflow: hidden;
+}
+
+.auth-visual .mark {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+    z-index: 2;
+}
+
+.auth-visual .pitch {
+    max-width: 380px;
+    z-index: 2;
+}
+
+.auth-visual .pitch h2 {
+    color: var(--cream);
+    font-size: 2rem;
+    line-height: 1.2;
+    margin-bottom: 14px;
+}
+
+.auth-visual .pitch p {
+    color: #d8e6da;
+    font-size: 0.98rem;
+}
+
+.auth-visual svg {
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 1;
+}
+
+.auth-form-side {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 24px;
+    background: var(--paper);
+}
+
+.auth-card { width: 100%; max-width: 380px; }
+
+.auth-card .eyebrow {
+    color: var(--gold-deep);
+    font-family: 'Karla', sans-serif;
+    font-weight: 600;
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+}
+
+.auth-card h1 { font-size: 1.7rem; margin-bottom: 6px; }
+
+.auth-card p.subtitle {
+    color: var(--muted);
+    font-size: 0.94rem;
+    margin-bottom: 26px;
+}
+
+.field { margin-bottom: 16px; }
+
+.field label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.83rem;
+    color: var(--soil);
+    margin-bottom: 6px;
+}
+
+.field input, .field select {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1.5px solid var(--border);
+    border-radius: 7px;
+    font-size: 0.95rem;
+    font-family: inherit;
+    background: var(--cream);
+}
+
+.field input:focus, .field select:focus {
+    outline: none;
+    border-color: var(--leaf);
+    background: var(--paper);
+}
+
+.btn {
+    display: inline-block;
+    width: 100%;
+    background: var(--leaf);
+    color: var(--cream);
+    border: none;
+    padding: 13px;
+    border-radius: 7px;
+    font-size: 1rem;
+    font-family: 'Karla', sans-serif;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+}
+
+.btn:hover { background: var(--leaf-deep); }
+.btn:active { transform: scale(0.99); }
+
+.switch-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--muted);
+}
+
+.alert {
+    padding: 11px 14px;
+    border-radius: 7px;
+    margin-bottom: 18px;
+    font-size: 0.9rem;
+    border-left: 3px solid transparent;
+}
+
+.alert-error { background: #f7ece8; color: var(--rust); border-left-color: var(--rust); }
+.alert-success { background: var(--leaf-soft); color: var(--leaf-deep); border-left-color: var(--leaf); }
+
+/* ---------- App shell: sidebar layout ---------- */
+.app-shell {
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    min-height: 100vh;
+}
+
+@media (max-width: 760px) {
+    .app-shell { grid-template-columns: 1fr; }
+    .app-sidebar { display: flex; flex-direction: row; overflow-x: auto; padding: 12px; }
+    .app-sidebar nav { display: flex; flex-direction: row; gap: 6px; }
+}
+
+.app-sidebar {
+    background: var(--soil);
+    color: var(--cream);
+    padding: 26px 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-sidebar .brand {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.15rem;
+    color: var(--gold);
+    margin-bottom: 34px;
+}
+
+.app-sidebar nav {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.app-sidebar nav a {
+    color: #ded3c2;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.app-sidebar nav a:hover, .app-sidebar nav a.active {
+    background: rgba(255,255,255,0.08);
+    color: var(--cream);
+    text-decoration: none;
+}
+
+.app-sidebar .signout a {
+    color: #c9a08e;
+}
+
+.app-main {
+    padding: 34px 40px;
+    max-width: 1000px;
+}
+
+.page-heading { margin-bottom: 26px; }
+.page-heading p { color: var(--muted); margin-top: 4px; }
+
+.card {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 26px;
+}
+
+.stat-box {
+    background: var(--paper);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
+    border-radius: 8px;
+    padding: 18px 20px;
+}
+
+.stat-box .value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.8rem;
+    color: var(--soil);
+}
+
+.stat-box .label {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+table { width: 100%; border-collapse: collapse; }
+
+table th, table td {
+    text-align: left;
+    padding: 11px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.92rem;
+}
+
+table th {
+    font-weight: 700;
+    color: var(--soil);
+    background: var(--cream);
+}
+
+/* ---------- Forms, badges, actions (Farm Records etc.) ---------- */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+}
+
+@media (max-width: 640px) {
+    .form-grid { grid-template-columns: 1fr; }
+}
+
+.form-grid .field.full { grid-column: 1 / -1; }
+
+.card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btn-small {
+    display: inline-block;
+    background: var(--leaf);
+    color: var(--cream);
+    padding: 9px 16px;
+    border-radius: 6px;
+    font-size: 0.88rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    width: auto;
+}
+
+.btn-small:hover { background: var(--leaf-deep); }
+
+.btn-outline {
+    display: inline-block;
+    background: transparent;
+    color: var(--soil);
+    padding: 8px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.btn-outline:hover { border-color: var(--leaf); color: var(--leaf); text-decoration: none; }
+
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 700;
+}
+
+.badge-planted { background: #fbeacb; color: #8a5a12; }
+.badge-growing { background: var(--leaf-soft); color: var(--leaf-deep); }
+.badge-harvested { background: #e4e0d8; color: var(--soil); }
+.badge-available { background: var(--leaf-soft); color: var(--leaf-deep); }
+.badge-sold { background: #e4e0d8; color: var(--soil); }
+
+.action-links a { font-size: 0.85rem; margin-right: 12px; }
+.action-links .delete-link { color: var(--rust); }
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+}
+
+/* ---------- Decision Support recommendation cards ---------- */
+.rec-card {
+    border-radius: 8px;
+    padding: 18px 20px;
+    margin-bottom: 14px;
+    border-left: 4px solid var(--border);
+    background: var(--cream);
+}
+
+.rec-card.rec-good { border-left-color: var(--leaf); background: var(--leaf-soft); }
+.rec-card.rec-wait { border-left-color: var(--gold); background: #faf1dc; }
+.rec-card.rec-unknown { border-left-color: var(--border); background: var(--cream); }
+
+.rec-card .rec-crop {
+    font-family: 'Fraunces', serif;
+    font-size: 1.05rem;
+    color: var(--soil);
+    margin-bottom: 4px;
+}
+
+.rec-card .rec-text {
+    font-size: 0.92rem;
+    color: var(--ink);
+}
+
+/* ---------- Reports: simple CSS bar chart ---------- */
+.bar-row {
+    display: grid;
+    grid-template-columns: 110px 1fr 90px;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.bar-row .bar-label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--soil);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bar-track {
+    background: var(--border);
+    border-radius: 5px;
+    height: 16px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: var(--leaf);
+}
+
+.bar-fill.revenue { background: var(--gold); }
+
+.bar-row .bar-value {
+    font-size: 0.85rem;
+    color: var(--muted);
+    text-align: right;
+}
+
+.profit-positive { color: var(--leaf-deep); font-weight: 700; }
+.profit-negative { color: var(--rust); font-weight: 700; }
+
+/* ---------- Harvest countdown widget ---------- */
+.countdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--border);
+}
+
+.countdown-row.due-soon { background: #f7ece8; border-left-color: var(--rust); }
+.countdown-row.due-mid { background: #faf1dc; border-left-color: var(--gold); }
+.countdown-row.due-far { background: var(--leaf-soft); border-left-color: var(--leaf); }
+
+.countdown-row .crop-name { font-weight: 700; color: var(--soil); }
+.countdown-row .days-left { font-size: 0.85rem; color: var(--muted); }
+
+.crop-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+/* ---------- Print styles (used by the Reports "Print" button) ---------- */
+@media print {
+    .app-sidebar, .btn-outline, .btn-small, .action-links, .no-print {
+        display: none !important;
+    }
+    .app-shell {
+        display: block;
+    }
+    .app-main {
+        max-width: 100%;
+        padding: 0;
+    }
+    body { background: #fff; }
+    .card { border: 1px solid #ccc; break-inside: avoid; }
+}

@@ -17,16 +17,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $unit = $_POST['unit'];
     $status = $_POST['status'];
 
+    // Handle an uploaded crop photo, if one was provided
+    $photoPath = !empty($_POST['existing_photo']) ? $_POST['existing_photo'] : null;
+    if (isset($_FILES['crop_photo']) && $_FILES['crop_photo']['error'] === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $fileType = mime_content_type($_FILES['crop_photo']['tmp_name']);
+        if (in_array($fileType, $allowedTypes) && $_FILES['crop_photo']['size'] <= 2 * 1024 * 1024) {
+            $extension = pathinfo($_FILES['crop_photo']['name'], PATHINFO_EXTENSION);
+            $newFileName = 'crop_' . uniqid() . '.' . $extension;
+            $destination = 'uploads/' . $newFileName;
+            if (move_uploaded_file($_FILES['crop_photo']['tmp_name'], $destination)) {
+                $photoPath = $destination;
+            }
+        }
+    }
+
     if (!empty($_POST['record_id'])) {
         // Updating an existing record — only allow if it belongs to this user
         $recordId = (int) $_POST['record_id'];
-        $stmt = $conn->prepare("UPDATE farm_records SET crop_name=?, planting_date=?, expected_harvest_date=?, input_cost=?, labour_cost=?, other_cost=?, quantity_harvested=?, unit=?, status=? WHERE id=? AND user_id=?");
-        $stmt->bind_param("sssddddssii", $cropName, $plantingDate, $harvestDate, $inputCost, $labourCost, $otherCost, $quantity, $unit, $status, $recordId, $userId);
+        $stmt = $conn->prepare("UPDATE farm_records SET crop_name=?, planting_date=?, expected_harvest_date=?, input_cost=?, labour_cost=?, other_cost=?, quantity_harvested=?, unit=?, photo_path=?, status=? WHERE id=? AND user_id=?");
+        $stmt->bind_param("sssddddsssii", $cropName, $plantingDate, $harvestDate, $inputCost, $labourCost, $otherCost, $quantity, $unit, $photoPath, $status, $recordId, $userId);
         $stmt->execute();
     } else {
         // Adding a new record
-        $stmt = $conn->prepare("INSERT INTO farm_records (user_id, crop_name, planting_date, expected_harvest_date, input_cost, labour_cost, other_cost, quantity_harvested, unit, status) VALUES (?,?,?,?,?,?,?,?,?,?)");
-        $stmt->bind_param("isssddddss", $userId, $cropName, $plantingDate, $harvestDate, $inputCost, $labourCost, $otherCost, $quantity, $unit, $status);
+        $stmt = $conn->prepare("INSERT INTO farm_records (user_id, crop_name, planting_date, expected_harvest_date, input_cost, labour_cost, other_cost, quantity_harvested, unit, photo_path, status) VALUES (?,?,?,?,?,?,?,?,?,?,?)");
+        $stmt->bind_param("isssddddsss", $userId, $cropName, $plantingDate, $harvestDate, $inputCost, $labourCost, $otherCost, $quantity, $unit, $photoPath, $status);
         $stmt->execute();
     }
 
@@ -58,21 +73,22 @@ include "includes/header.php";
 ?>
 
 <div class="page-heading">
-    <h1>Farm Records</h1>
-    <p>Log every crop you plant, its costs, and what it eventually yields.</p>
+    <h1><?= t('farm_records') ?></h1>
+    <p><?= t('farm_records_intro') ?></p>
 </div>
 
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;"><?= $editRecord ? 'Edit record' : 'Add a new record' ?></h2>
+        <h2 style="font-size:1.1rem;"><?= $editRecord ? t('edit_record') : t('add_new_record') ?></h2>
         <?php if ($editRecord): ?>
             <a href="records.php" class="btn-outline">Cancel edit</a>
         <?php endif; ?>
     </div>
 
-    <form method="POST" action="records.php">
+    <form method="POST" action="records.php" enctype="multipart/form-data">
         <?php if ($editRecord): ?>
             <input type="hidden" name="record_id" value="<?= $editRecord['id'] ?>">
+            <input type="hidden" name="existing_photo" value="<?= htmlspecialchars($editRecord['photo_path'] ?? '') ?>">
         <?php endif; ?>
 
         <div class="form-grid">
@@ -131,16 +147,26 @@ include "includes/header.php";
                     <?php endforeach; ?>
                 </select>
             </div>
+            <div class="field full">
+                <label for="crop_photo">Crop photo (optional, JPG/PNG/WEBP, max 2MB)</label>
+                <input type="file" id="crop_photo" name="crop_photo" accept="image/jpeg,image/png,image/webp">
+                <?php if ($editRecord && !empty($editRecord['photo_path'])): ?>
+                    <div style="margin-top:8px;">
+                        <img src="<?= htmlspecialchars($editRecord['photo_path']) ?>" class="crop-thumb" alt="Current photo">
+                        <span style="font-size:0.82rem; color:#7a6f5c;"> Current photo — upload a new one to replace it.</span>
+                    </div>
+                <?php endif; ?>
+            </div>
         </div>
 
         <br>
-        <button type="submit" class="btn-small"><?= $editRecord ? 'Save changes' : 'Add record' ?></button>
+        <button type="submit" class="btn-small"><?= $editRecord ? t('save_changes') : t('add_record') ?></button>
     </form>
 </div>
 
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;">All records</h2>
+        <h2 style="font-size:1.1rem;"><?= t('all_records') ?></h2>
     </div>
 
     <?php if ($records->num_rows === 0): ?>
@@ -148,6 +174,7 @@ include "includes/header.php";
     <?php else: ?>
         <table>
             <tr>
+                <th>Photo</th>
                 <th>Crop</th>
                 <th>Status</th>
                 <th>Total cost</th>
@@ -158,6 +185,13 @@ include "includes/header.php";
                 $totalCost = $row['input_cost'] + $row['labour_cost'] + $row['other_cost'];
             ?>
                 <tr>
+                    <td>
+                        <?php if (!empty($row['photo_path'])): ?>
+                            <img src="<?= htmlspecialchars($row['photo_path']) ?>" class="crop-thumb" alt="<?= htmlspecialchars($row['crop_name']) ?>">
+                        <?php else: ?>
+                            —
+                        <?php endif; ?>
+                    </td>
                     <td><?= htmlspecialchars($row['crop_name']) ?></td>
                     <td><span class="badge badge-<?= $row['status'] ?>"><?= ucfirst($row['status']) ?></span></td>
                     <td>KES <?= number_format($totalCost, 2) ?></td>

@@ -28,34 +28,72 @@ $stmt->bind_param("i", $userId);
 $stmt->execute();
 $recentRecords = $stmt->get_result();
 
+// Crops approaching their expected harvest date, soonest first
+$stmt = $conn->prepare("
+    SELECT crop_name, expected_harvest_date, DATEDIFF(expected_harvest_date, CURDATE()) AS days_left
+    FROM farm_records
+    WHERE user_id = ? AND status != 'harvested' AND expected_harvest_date IS NOT NULL
+    ORDER BY expected_harvest_date ASC
+    LIMIT 5
+");
+$stmt->bind_param("i", $userId);
+$stmt->execute();
+$upcomingHarvests = $stmt->get_result();
+
 $pageTitle = "Dashboard";
 include "includes/header.php";
 ?>
 
 <div class="page-heading">
-    <h1>Welcome, <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
-    <p>You're logged in as <?= htmlspecialchars($_SESSION['role']) ?>. Here's your farm at a glance.</p>
+    <h1><?= t('welcome') ?>, <?= htmlspecialchars($_SESSION['full_name']) ?></h1>
+    <p><?= t('logged_in_as') ?> <?= htmlspecialchars($_SESSION['role']) ?>. <?= t('glance') ?></p>
 </div>
 
 <div class="stat-grid">
     <div class="stat-box">
         <div class="value"><?= $activeCrops ?></div>
-        <div class="label">Active crops</div>
+        <div class="label"><?= t('active_crops') ?></div>
     </div>
     <div class="stat-box">
         <div class="value">KES <?= number_format($totalCost, 2) ?></div>
-        <div class="label">Total costs recorded</div>
+        <div class="label"><?= t('total_costs_recorded') ?></div>
     </div>
     <div class="stat-box">
         <div class="value"><?= $listingCount ?></div>
-        <div class="label">Market listings</div>
+        <div class="label"><?= t('market_listings') ?></div>
     </div>
 </div>
 
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;">Recent farm records</h2>
-        <a href="records.php" class="btn-outline">Manage records →</a>
+        <h2 style="font-size:1.1rem;"><?= t('upcoming_harvests') ?></h2>
+        <a href="records.php" class="btn-outline"><?= t('manage_records') ?></a>
+    </div>
+
+    <?php if ($upcomingHarvests->num_rows === 0): ?>
+        <div class="empty-state">No crops with an expected harvest date yet.</div>
+    <?php else: ?>
+        <?php while ($row = $upcomingHarvests->fetch_assoc()):
+            $days = (int) $row['days_left'];
+            if ($days <= 3) { $urgency = 'due-soon'; $label = $days < 0 ? abs($days) . ' days overdue' : ($days == 0 ? 'Due today' : "$days days left"); }
+            elseif ($days <= 14) { $urgency = 'due-mid'; $label = "$days days left"; }
+            else { $urgency = 'due-far'; $label = "$days days left"; }
+        ?>
+            <div class="countdown-row <?= $urgency ?>">
+                <div>
+                    <div class="crop-name"><?= htmlspecialchars($row['crop_name']) ?></div>
+                    <div class="days-left">Expected: <?= date('d M Y', strtotime($row['expected_harvest_date'])) ?></div>
+                </div>
+                <div class="days-left"><strong><?= $label ?></strong></div>
+            </div>
+        <?php endwhile; ?>
+    <?php endif; ?>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <h2 style="font-size:1.1rem;"><?= t('recent_farm_records') ?></h2>
+        <a href="records.php" class="btn-outline"><?= t('manage_records') ?></a>
     </div>
 
     <?php if ($recentRecords->num_rows === 0): ?>

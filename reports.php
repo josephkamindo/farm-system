@@ -54,9 +54,12 @@ $pageTitle = "Reports";
 include "includes/header.php";
 ?>
 
-<div class="page-heading">
-    <h1>Reports</h1>
-    <p>A summary of costs, estimated revenue, and profit across your crops.</p>
+<div class="page-heading" style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px;">
+    <div>
+        <h1><?= t('reports') ?></h1>
+        <p><?= t('reports_intro') ?></p>
+    </div>
+    <button onclick="window.print()" class="btn-small no-print" style="width:auto;"><?= t('print_report') ?></button>
 </div>
 
 <div class="stat-grid">
@@ -126,16 +129,19 @@ include "includes/header.php";
                 <th>Crop</th>
                 <th>Qty harvested</th>
                 <th>Total cost</th>
+                <th>Cost efficiency</th>
                 <th>Total revenue</th>
                 <th>Profit / loss</th>
             </tr>
             <?php foreach ($summary as $crop => $data):
                 $profit = $data['revenue'] - $data['cost'];
+                $efficiency = $data['qty'] > 0 ? $data['cost'] / $data['qty'] : null;
             ?>
                 <tr>
                     <td><?= htmlspecialchars($crop) ?></td>
                     <td><?= number_format($data['qty'], 1) ?></td>
                     <td>KES <?= number_format($data['cost'], 2) ?></td>
+                    <td><?= $efficiency !== null ? 'KES ' . number_format($efficiency, 2) . ' / unit' : '—' ?></td>
                     <td>KES <?= number_format($data['revenue'], 2) ?></td>
                     <td class="<?= $profit >= 0 ? 'profit-positive' : 'profit-negative' ?>">
                         KES <?= number_format($profit, 2) ?>
@@ -150,7 +156,9 @@ include "includes/header.php";
     <p style="color:#7a6f5c; font-size:0.85rem;">
         Note: revenue is estimated from market listings you've marked as "Sold" in Market Linkage
         (quantity × asking price). This is a simplified figure for demonstration with sample data,
-        as described in the study's scope.
+        as described in the study's scope. "Cost efficiency" (KES spent per unit harvested) is a
+        simple resource-use indicator, inspired by data-driven efficiency practices used in
+        high-productivity agricultural systems abroad — a lower figure means more output per shilling spent.
     </p>
 </div>
 

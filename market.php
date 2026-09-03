@@ -62,14 +62,14 @@ include "includes/header.php";
 ?>
 
 <div class="page-heading">
-    <h1>Market Linkage</h1>
-    <p>List your produce for buyers to see, and browse what other farmers have available.</p>
+    <h1><?= t('market_linkage') ?></h1>
+    <p><?= t('market_intro') ?></p>
 </div>
 
 <?php if ($role === 'farmer'): ?>
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;"><?= $editListing ? 'Edit listing' : 'List your produce' ?></h2>
+        <h2 style="font-size:1.1rem;"><?= $editListing ? t('edit_record') : t('list_your_produce') ?></h2>
         <?php if ($editListing): ?>
             <a href="market.php" class="btn-outline">Cancel edit</a>
         <?php endif; ?>
@@ -123,13 +123,13 @@ include "includes/header.php";
         </div>
 
         <br>
-        <button type="submit" class="btn-small"><?= $editListing ? 'Save changes' : 'List produce' ?></button>
+        <button type="submit" class="btn-small"><?= $editListing ? t('save_changes') : t('list_your_produce') ?></button>
     </form>
 </div>
 
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;">My listings</h2>
+        <h2 style="font-size:1.1rem;"><?= t('my_listings') ?></h2>
     </div>
 
     <?php if ($myListings->num_rows === 0): ?>
@@ -163,7 +163,7 @@ include "includes/header.php";
 
 <div class="card">
     <div class="card-head">
-        <h2 style="font-size:1.1rem;">Available in the marketplace</h2>
+        <h2 style="font-size:1.1rem;"><?= t('available_marketplace') ?></h2>
     </div>
 
     <?php if ($marketplace->num_rows === 0): ?>

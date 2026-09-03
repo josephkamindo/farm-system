@@ -440,3 +440,45 @@ table th {
 
 .profit-positive { color: var(--leaf-deep); font-weight: 700; }
 .profit-negative { color: var(--rust); font-weight: 700; }
+
+/* ---------- Harvest countdown widget ---------- */
+.countdown-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+    border-left: 4px solid var(--border);
+}
+
+.countdown-row.due-soon { background: #f7ece8; border-left-color: var(--rust); }
+.countdown-row.due-mid { background: #faf1dc; border-left-color: var(--gold); }
+.countdown-row.due-far { background: var(--leaf-soft); border-left-color: var(--leaf); }
+
+.countdown-row .crop-name { font-weight: 700; color: var(--soil); }
+.countdown-row .days-left { font-size: 0.85rem; color: var(--muted); }
+
+.crop-thumb {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid var(--border);
+}
+
+/* ---------- Print styles (used by the Reports "Print" button) ---------- */
+@media print {
+    .app-sidebar, .btn-outline, .btn-small, .action-links, .no-print {
+        display: none !important;
+    }
+    .app-shell {
+        display: block;
+    }
+    .app-main {
+        max-width: 100%;
+        padding: 0;
+    }
+    body { background: #fff; }
+    .card { border: 1px solid #ccc; break-inside: avoid; }
+}

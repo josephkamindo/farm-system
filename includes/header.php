@@ -1,3 +1,6 @@
+<?php
+require_once "includes/lang.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

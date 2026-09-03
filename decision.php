@@ -86,8 +86,8 @@ include "includes/header.php";
 ?>
 
 <div class="page-heading">
-    <h1>Decision Support</h1>
-    <p>Rule-based recommendations on the best time to sell, based on recorded seasonal market prices.</p>
+    <h1><?= t('decision_support') ?></h1>
+    <p><?= t('decision_intro') ?></p>
 </div>
 
 <div class="card">
